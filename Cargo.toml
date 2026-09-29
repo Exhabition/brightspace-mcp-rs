@@ -1,0 +1,28 @@
+[package]
+name = "brightspace-mcp-rs"
+version = "0.1.0"
+edition = "2024"
+description = "Read-only MCP server for D2L Brightspace using Microsoft SSO"
+license = "MIT"
+
+[[bin]]
+name = "brightspace-mcp"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+base64 = "0.22"
+chromiumoxide = "0.9.1"
+clap = { version = "4", features = ["derive", "env"] }
+dirs-next = "2"
+futures = "0.3"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+rmcp = { version = "3.5.0", features = ["server", "macros", "schemars", "transport-io"] }
+schemars = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time", "process"] }
+url = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time", "net", "io-util"] }
