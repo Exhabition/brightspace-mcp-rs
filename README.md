@@ -6,17 +6,26 @@ Authentication uses one path only: a visible Chromium browser opens Brightspace,
 
 ## Requirements
 
-- Rust 1.85 or newer
+- Node.js 18 or newer (for the `npx` launcher)
 - Chrome or Chromium installed
 - A Brightspace site that authenticates through Microsoft SSO
+- Rust 1.85 or newer only for local builds
 
 ## Run
+
+For local development:
 
 ```sh
 cargo run -- --base-url https://learn.example.edu
 ```
 
-Or set `BRIGHTSPACE_BASE_URL`. MCP clients launch this command as a stdio server. Run `sync_courses` to open Chromium and sign in through Microsoft SSO/MFA. The browser stays open for the MCP server lifetime. Sync fetches all enrolled courses and writes local snapshots; course tools and resources read those snapshots without contacting Brightspace. After an MCP restart, cached reads still work. Run `sync_courses` when you want fresh data; Microsoft may ask for password and MFA again if the school does not persist browser sessions.
+For regular use, install Node.js 18+ and use the npm launcher. It downloads the matching binary from the GitHub release on first start and reuses it afterward. Chrome or Chromium remains required for sign-in.
+
+```sh
+npx -y @exhabition/brightspace-mcp --base-url https://learn.example.edu
+```
+
+Or set `BRIGHTSPACE_BASE_URL`. The browser stays open for the MCP server lifetime. Sync fetches all enrolled courses and writes local snapshots; course tools and resources read those snapshots without contacting Brightspace. After an MCP restart, cached reads still work. Run `sync_courses` when you want fresh data; Microsoft may ask for password and MFA again if the school does not persist browser sessions.
 
 Browser profile defaults to `~/.brightspace-mcp-rs/browser-profile`. Override with `--browser-profile` or `BRIGHTSPACE_BROWSER_PROFILE`. The profile contains Microsoft and Brightspace browser session data, so keep it private. On Unix, the server sets its directory permissions to `0700`. The process keeps the Brightspace session cookie in memory; it does not write that cookie or a password to a separate file. Set `BRIGHTSPACE_CHROME_PATH` to the Chromium executable if auto-detection fails.
 
@@ -39,20 +48,20 @@ Resource templates:
 
 ## Client configuration
 
-Example stdio config:
+Example stdio config using npx:
 
 ```json
 {
   "mcpServers": {
     "brightspace": {
-      "command": "/absolute/path/to/brightspace-mcp",
-      "args": ["--base-url", "https://learn.example.edu"]
+      "command": "npx",
+      "args": ["-y", "@exhabition/brightspace-mcp", "--base-url", "https://learn.example.edu"]
     }
   }
 }
 ```
 
-MCP clients use the same command/args pattern. Do not add credentials to the config; sign-in happens in the visible browser.
+MCP clients use the same command/args pattern. The private npm package requires npm access for the signed-in user. First use needs network access to npm and GitHub Releases. Do not add Brightspace credentials to the config; sign-in happens in the visible browser.
 
 ## Reference implementation
 

@@ -1,0 +1,17 @@
+{
+  "name": "@exhabition/brightspace-mcp",
+  "version": "0.1.1",
+  "description": "Read-only MCP server for D2L Brightspace",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "type": "module",
+  "bin": {
+    "brightspace-mcp": "bin/brightspace-mcp.js"
+  },
+  "files": ["bin/brightspace-mcp.js"],
+  "engines": {
+    "node": ">=18"
+  }
+}
