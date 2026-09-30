@@ -63,6 +63,8 @@ Example stdio config using npx:
 
 MCP clients use the same command/args pattern. The private npm package requires npm access for the signed-in user. First use needs network access to npm and GitHub Releases. Do not add Brightspace credentials to the config; sign-in happens in the visible browser.
 
+For npm Trusted Publishing, publish the package once using an authenticated npm session; npm requires the package to exist before a trusted publisher can be configured. Then configure its Trusted Publisher as GitHub Actions with organization `Exhabition`, repository `brightspace-mcp-rs`, workflow `release.yml`, and permission to run `npm publish`. The release workflow uses GitHub OIDC and requires no npm CI token.
+
 ## Reference implementation
 
 Tool names, resource URI patterns, and Brightspace API behavior were adapted from [JhostinAleck/brightspace-mcp](https://github.com/JhostinAleck/brightspace-mcp), licensed under MIT. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

@@ -3,6 +3,10 @@
   "version": "0.1.1",
   "description": "Read-only MCP server for D2L Brightspace",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Exhabition/brightspace-mcp-rs.git"
+  },
   "publishConfig": {
     "access": "restricted"
   },
