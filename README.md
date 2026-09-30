@@ -61,9 +61,15 @@ Example stdio config using npx:
 }
 ```
 
-MCP clients use the same command/args pattern. The private npm package requires npm access for the signed-in user. First use needs network access to npm and GitHub Releases. Do not add Brightspace credentials to the config; sign-in happens in the visible browser.
+MCP clients use the same command/args pattern. The private GitHub Packages package requires GitHub access for the signed-in user. First use needs network access to GitHub Packages and GitHub Releases. Do not add Brightspace credentials to the config; sign-in happens in the visible browser.
 
-For npm Trusted Publishing, publish the package once using an authenticated npm session; npm requires the package to exist before a trusted publisher can be configured. Then configure its Trusted Publisher as GitHub Actions with organization `Exhabition`, repository `brightspace-mcp-rs`, workflow `release.yml`, and permission to run `npm publish`. The release workflow uses GitHub OIDC and requires no npm CI token.
+To let `npx` install the private package, create a GitHub personal access token (classic) with `read:packages`, then log into the GitHub npm registry:
+
+```sh
+npm login --scope=@exhabition --auth-type=legacy --registry=https://npm.pkg.github.com
+```
+
+Use your GitHub username and that token as the password when prompted. npm stores registry credentials in your user config for later `npx` runs. The GitHub Actions release publishes to GitHub Packages with the repository's `GITHUB_TOKEN`; no npm token or Trusted Publisher setup is needed.
 
 ## Reference implementation
 
