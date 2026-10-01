@@ -8,8 +8,8 @@
     "url": "https://github.com/Exhabition/brightspace-mcp-rs.git"
   },
   "publishConfig": {
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "type": "module",
   "bin": {

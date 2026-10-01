@@ -19,7 +19,7 @@ For local development:
 cargo run -- --base-url https://learn.example.edu
 ```
 
-For regular use, install Node.js 18+ and use the npm launcher. It downloads the matching binary from the GitHub release on first start and reuses it afterward. Chrome or Chromium remains required for sign-in.
+For regular use, install Node.js 18+ and use the public npm package. On first start, the launcher downloads the matching binary for your operating system and CPU from the public GitHub release, then reuses it afterward. Chrome or Chromium remains required for sign-in.
 
 ```sh
 npx -y @exhabition/brightspace-mcp --base-url https://learn.example.edu
@@ -61,16 +61,8 @@ Example stdio config using npx:
 }
 ```
 
-MCP clients use the same command/args pattern. The private GitHub Packages package requires GitHub access for the signed-in user. First use needs network access to GitHub Packages and GitHub Releases. Do not add Brightspace credentials to the config; sign-in happens in the visible browser.
-
-To let `npx` install the private package, create a GitHub personal access token (classic) with `read:packages`, then log into the GitHub npm registry:
-
-```sh
-npm login --scope=@exhabition --auth-type=legacy --registry=https://npm.pkg.github.com
-```
-
-Use your GitHub username and that token as the password when prompted. npm stores registry credentials in your user config for later `npx` runs. The GitHub Actions release publishes to GitHub Packages with the repository's `GITHUB_TOKEN`; no npm token or Trusted Publisher setup is needed.
+The package is published to the public npm registry. First use needs network access to npm and GitHub Releases. Do not add Brightspace credentials to the config; sign-in happens in the visible browser.
 
 ## Reference implementation
 
-Tool names, resource URI patterns, and Brightspace API behavior were adapted from [JhostinAleck/brightspace-mcp](https://github.com/JhostinAleck/brightspace-mcp), licensed under MIT. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Tool names, resource URI patterns, and Brightspace API behavior were adapted from [JhostinAleck/brightspace-mcp](https://github.com/JhostinAleck/brightspace-mcp), licensed under MIT.
