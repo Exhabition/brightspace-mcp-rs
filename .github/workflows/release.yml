@@ -69,15 +69,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          registry-url: https://npm.pkg.github.com
+          registry-url: https://registry.npmjs.org
           scope: '@exhabition'
           package-manager-cache: false
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm publish --access public
