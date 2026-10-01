@@ -1,6 +1,6 @@
 {
   "name": "@exhabition/brightspace-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Read-only MCP server for D2L Brightspace",
   "license": "MIT",
   "repository": {
