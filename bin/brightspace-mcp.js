@@ -5,7 +5,6 @@ import { get } from 'node:https';
 import { homedir, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { spawn } from 'node:child_process';
-import { createGunzip } from 'node:zlib';
 import { createRequire } from 'node:module';
 import { pipeline } from 'node:stream/promises';
 
@@ -44,7 +43,7 @@ async function download(url, destination, redirects = 0) {
         response.resume();
         return reject(new Error(`Download failed: HTTP ${response.statusCode}`));
       }
-      pipeline(response, createGunzip(), createWriteStream(destination)).then(resolve, reject);
+      pipeline(response, createWriteStream(destination)).then(resolve, reject);
     }).on('error', reject);
   });
 }
