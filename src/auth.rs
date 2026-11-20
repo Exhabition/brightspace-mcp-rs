@@ -1,9 +1,12 @@
 use anyhow::{Context, Result, anyhow};
-use chromiumoxide::{Browser, BrowserConfig};
+use chromiumoxide::{Browser, BrowserConfig, cdp::browser_protocol::network::DeleteCookiesParams};
 use futures::StreamExt;
 use std::{future::Future, path::PathBuf, pin::Pin, time::Duration};
 use tokio::{sync::Mutex, task::JoinHandle};
 use url::Url;
+
+const SESSION_COOKIE: &str = "d2lSessionVal";
+const SECURE_SESSION_COOKIE: &str = "d2lSecureSessionVal";
 
 pub type SessionFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + 'a>>;
 
@@ -46,7 +49,7 @@ impl BrowserSession {
                 return Ok(cookie.clone());
             }
         }
-        let cookie = self.login().await?;
+        let cookie = self.login(force_login).await?;
         *cached = Some(cookie.clone());
         Ok(cookie)
     }
@@ -55,7 +58,7 @@ impl BrowserSession {
         *self.cookie.lock().await = None;
     }
 
-    async fn login(&self) -> Result<String> {
+    async fn login(&self, force_login: bool) -> Result<String> {
         std::fs::create_dir_all(&self.profile_dir).with_context(|| {
             format!(
                 "cannot create browser profile at {}",
@@ -102,7 +105,21 @@ impl BrowserSession {
         let browser = browser
             .as_ref()
             .ok_or_else(|| anyhow!("Chromium browser failed to initialize"))?;
-        let page = browser.browser.new_page(login_url.as_str()).await?;
+        let page = browser.browser.new_page("about:blank").await?;
+        if force_login {
+            // Chromium restores Brightspace session cookies the server already
+            // rejected; delete them so only cookies from a fresh sign-in qualify.
+            page.delete_cookies(
+                [SESSION_COOKIE, SECURE_SESSION_COOKIE]
+                    .map(|name| DeleteCookiesParams {
+                        url: Some(self.base_url.to_string()),
+                        ..DeleteCookiesParams::new(name)
+                    })
+                    .into(),
+            )
+            .await?;
+        }
+        page.goto(login_url.as_str()).await?;
         page.bring_to_front().await?;
         let deadline = tokio::time::Instant::now() + Duration::from_secs(600);
         let mut cookie_header = None;
@@ -116,11 +133,11 @@ impl BrowserSession {
             let session = cookies
                 .iter()
                 .filter(on_brightspace)
-                .find(|cookie| cookie.name == "d2lSessionVal");
+                .find(|cookie| cookie.name == SESSION_COOKIE);
             let secure = cookies
                 .iter()
                 .filter(on_brightspace)
-                .find(|cookie| cookie.name == "d2lSecureSessionVal");
+                .find(|cookie| cookie.name == SECURE_SESSION_COOKIE);
             if let (Some(session), Some(secure)) = (session, secure) {
                 cookie_header = Some(format!(
                     "{}={}; {}={}",
